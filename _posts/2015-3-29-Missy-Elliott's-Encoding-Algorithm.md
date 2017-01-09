@@ -173,7 +173,7 @@ As it turns out, Missy Elliott's song is all about a novel way to generate the s
 
 In fact, there's one very useful application for sequences like these - the answer might come as a surprise!
 
-<p align="center"><img src="/images/missy_elliott/portrait2.jpg">It's a knock-out!</p>
+<p align="center"><img src="/images/missy_elliott/portrait2.jpg"></p>
 
 To keep things simple from here on, let's use a somewhat shorter sequence.
 The following perfect oscillating sequence can also be generated using the Missy Elliott algorithm
