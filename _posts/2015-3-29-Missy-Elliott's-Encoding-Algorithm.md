@@ -137,7 +137,7 @@ Encoding(126) = 192 > Encoding(127) = 128 > Encoding(128) = 127 > Encoding(129) 
 
 This can be visualised by taking a subsection of the above graph:
 
-<p align="center"><img src="/images/missy_elliott/scatter_graph.png"></p>
+<p align="center"><img src="/images/missy_elliott/scatter_graph2.png"></p>
 
 In fact, this sequence has an even crazier property hiding beneath the surface.
 Let's only look at the second half of the mappings, i.e.
@@ -173,7 +173,7 @@ As it turns out, Missy Elliott's song is all about a novel way to generate the s
 
 In fact, there's one very useful application for sequences like these - the answer might come as a surprise!
 
-<p align="center"><img src="/images/missy_elliott/portrait2.png">It's a knock-out!</p>
+<p align="center"><img src="/images/missy_elliott/portrait2.jpg">It's a knock-out!</p>
 
 To keep things simple from here on, let's use a somewhat shorter sequence.
 The following perfect oscillating sequence can also be generated using the Missy Elliott algorithm
