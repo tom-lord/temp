@@ -59,7 +59,7 @@ Every other piece of syntax is really just a nice way to simplify writing out ho
 /a+/     == /a|a*/
 /a?/     == /ε|a/
 /a{2,4}/ == /aa|aaa|aaaa/
-/a{3,}   == /aaaa*/
+/a{3,}/  == /aaaa*/
 /[a-d]*/ == /(a|b|c|d)*/
 /\d\n?/  == /(0|1|2|3|4|5|6|7|8|9)(ε|\n)
 
