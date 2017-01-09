@@ -53,40 +53,48 @@ Oh, and there's also brackets - so maybe five pieces of syntax, if you want to c
 
 Every other piece of syntax is really just a nice way to simplify writing out horrendously long, complicated combinations of the above. Let's try a few examples:
 
-    /a+/     == /a|a*/
-    /a?/     == /ε|a/
-    /a{2,4}/ == /aa|aaa|aaaa/
-    /a{3,}   == /aaaa*/
-    /[a-d]*/ == /(a|b|c|d)*/
-    /\d\n?/  == /(0|1|2|3|4|5|6|7|8|9)(ε|\n)
-    
-    # Note: My use of the == operator here is not to be taken
-    # too literally... In ruby, Regexp equality is not based
-    # purely on what strings they match!
-    # http://ruby-doc.org/core/Regexp.html#method-i-3D-3D
+```ruby
+/a+/     == /a|a*/
+/a?/     == /ε|a/
+/a{2,4}/ == /aa|aaa|aaaa/
+/a{3,}   == /aaaa*/
+/[a-d]*/ == /(a|b|c|d)*/
+/\d\n?/  == /(0|1|2|3|4|5|6|7|8|9)(ε|\n)
+
+# Note: My use of the == operator here is not to be taken
+# too literally... In ruby, Regexp equality is not based
+# purely on what strings they match!
+# http://ruby-doc.org/core/Regexp.html#method-i-3D-3D
+```
 
 ...Hopefully, you get the idea. To put this another way, any regex that _can't_ be expressed in this way is _not_ truly a "regular" expression!
 
 An easy way to see whether or not this is the case is: Does (part of) the regex need to know its surrounding context, in order to determine a match? For example:
 
-    /\bword\b/ # How does "\b" know whether it lies on a word boundary?
-    /line1\n^line2/ # How does "^" know whether it lies at the start of a line?
-    /irregular (?=expression)/ # Or in general, how can any "look-ahead"/"look-behind" be regular?
+```ruby
+/\bword\b/ # How does "\b" know whether it lies on a word boundary?
+/line1\n^line2/ # How does "^" know whether it lies at the start of a line?
+/irregular (?=expression)/ # Or in general, how can any "look-ahead"/"look-behind" be regular?
+```
 
 These all need to know "what came before", or "what comes next", and are therefore not _True Regular Expressions™_. Hopefully this makes the common claim that "back-references are not regular" a little more obvious to understand: You need to know what the capture group matches before you can know what the back-reference matches (i.e. knowledge of context). So of course you cannot express such patterns using only those four symbols!
 
 One final point to make, before we move on: There is only really one type of repeater in regex; the others are all nothing more than shorthand:
 
-    /a/  == /a{1}/
-    /a?/ == /a{0,1}/
-    /a*/ == /a{0,}/
-    /a+/ == /a{1,}/
+```ruby
+/a/  == /a{1}/
+/a?/ == /a{0,1}/
+/a*/ == /a{0,}/
+/a+/ == /a{1,}/
+```
 
 Understanding this structure is at the very heart of my ruby gem; the whole library architecture depends on (and, for some occasional edge cases, is restricted by!) it.
 
 All _True Regular Expressions™_ are built using this structure:
 
-    /Group-Repeater-Group-Repeater-Group-Repeater-.../
+```ruby
+/Group-Repeater-Group-Repeater-Group-Repeater-.../
+```
 
 Where every group can, itself, be built using that same structure.
 
@@ -94,9 +102,11 @@ Where every group can, itself, be built using that same structure.
 
 I'm glad you asked. Consider the following:
 
-    /(this|that)+/
-    == /(this|that){1,}/
-    == /(t{1}h{1}i{1}s{1}|t{1}h{1}a{1}t{1}){1,}/
+```ruby
+/(this|that)+/
+== /(this|that){1,}/
+== /(t{1}h{1}i{1}s{1}|t{1}h{1}a{1}t{1}){1,}/
+```
 
 (Yuck! Thankfully we don't normally need to write them out like this!...)
 But this lays the foundations for the main purpose of this blog post:
@@ -115,7 +125,9 @@ This may look complicated, but it's essentially not much different to what I des
 
 Or, in other words, the above regex has been interpreted as equivalent to the following:
 
-    /(a{0,2}|b{1,3}){1}/
+```ruby
+/(a{0,2}|b{1,3}){1}/
+```
 
 Like I said above: `/Group-Repeater-Group-Repeater-Group-Repeater-.../`
 
@@ -141,7 +153,9 @@ Once again, we make use of `PlusRepeater#result` and `SingleCharGroup#result` to
 
 However, in this case we end up with the following:
 
-    [["a", "aa", "aaa"], ["b", "bb", "bbb"], ["c", "cc", "ccc"]]
+```ruby
+[["a", "aa", "aaa"], ["b", "bb", "bbb"], ["c", "cc", "ccc"]]
+```
 
 Where each of those inner arrays is the result of each `PlusRepeater`. We need to make one more step: Find all possible results, from joining one element from each array, to form a "final result" string. Enter the magic glue that holds this whole thing together:
 
@@ -151,7 +165,9 @@ Where each of those inner arrays is the result of each `PlusRepeater`. We need t
 
 And so, after applying this method to the above array, we end up with:
 
-    ["abc", "abcc", "abccc", "abbc", "abbcc", .....]
+```ruby
+["abc", "abcc", "abccc", "abbc", "abbcc", .....]
+```
 
 This method gets used a lot, when dealing with more complicated regexes! It is the magic function that allows patterns to be made arbitrarily complicated, with unlimited nesting of groups and so on.
 
@@ -166,10 +182,12 @@ Oh, but...
 * What about unicode characters, control codes, named properties, and so on?
 * How on earth do you correctly parse all of the possible syntax in character sets, such as:
 
-    /[abc]/.examples
-    /[a-z]/.examples
-    /[^\d\ba-c]/.examples
-    /[[:alpha:]&&[a-c]]/.examples
+```ruby
+/[abc]/.examples
+/[a-z]/.examples
+/[^\d\ba-c]/.examples
+/[[:alpha:]&&[a-c]]/.examples
+```
 
 ...And I'm barely getting started here! There is a huge range of syntax to consider!
 
@@ -188,7 +206,9 @@ But, as promised, all shall be revealed...
 
 The important thing to recognise here is that you cannot know what the back-references need to match, until after the rest of the regex example has been generated. For example, consider the following:
 
-    /(a|b)\1/.random_example
+```ruby
+/(a|b)\1/.random_example
+```
 
 You cannot possibly know whether the `\1` is meant to be an `"a"` or a `"b"`, until after the capture group's "partial example" is chosen!
 
