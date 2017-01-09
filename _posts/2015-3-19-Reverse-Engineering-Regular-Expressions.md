@@ -74,9 +74,14 @@ Every other piece of syntax is really just a nice way to simplify writing out ho
 An easy way to see whether or not this is the case is: Does (part of) the regex need to know its surrounding context, in order to determine a match? For example:
 
 ```ruby
-/\bword\b/ # How does "\b" know whether it lies on a word boundary?
-/line1\n^line2/ # How does "^" know whether it lies at the start of a line?
-/irregular (?=expression)/ # Or in general, how can any "look-ahead"/"look-behind" be regular?
+# How does "\b" know whether it lies on a word boundary?
+/\bword\b/
+
+# How does "^" know whether it lies at the start of a line?
+/line1\n^line2/
+
+# Or in general, how can any "look-ahead"/"look-behind" be regular?
+/irregular (?=expression)/
 ```
 
 These all need to know "what came before", or "what comes next", and are therefore not _True Regular Expressions™_. Hopefully this makes the common claim that "back-references are not regular" a little more obvious to understand: You need to know what the capture group matches before you can know what the back-reference matches (i.e. knowledge of context). So of course you cannot express such patterns using only those four symbols!
@@ -121,11 +126,21 @@ Without getting bogged down in the nitty-gritty implementation details of parsin
 
   Picture
 
-This may look complicated, but it's essentially not much different to what I described above. There is only one key additional thing to consider: In order to avoid problems with infinity, we must restrict repeaters like * and + to have an upper limit. Taken straight from the gem's README:
+This may look complicated, but it's essentially not much different to what I described above.
+There is only one key additional thing to consider:
+In order to avoid problems with infinity, we must restrict repeaters like * and + to have an upper limit.
+Taken [straight from the gem's README](https://github.com/tom-lord/regexp-examples#configuration-options):
 
-  Picture
+> `max_repeater_variance` (default = `2`) restricts how many examples to return for each repeater. For example:
+>
+> `.*` is equivalent to `.{0,2}`
+> `.+` is equivalent to `.{1,3}`
+> `.{2,}` is equivalent to `.{2,4}`
+> `.{,3}` is equivalent to `.{0,2}`
+> `.{3,8}` is equivalent to `.{3,5}`
 
-Or, in other words, the above regex has been interpreted as equivalent to the following:
+
+Or, in other words, the above regex of `/a*|b+/` has been interpreted as equivalent to the following:
 
 ```ruby
 /(a{0,2}|b{1,3}){1}/
@@ -244,12 +259,32 @@ There is a lot of intricate logic involved in actually keeping track of the resu
 
 And now finally, young Padawan, you are ready to see the actual implementation of `Regexp#examples`:
 
-  Picture
+```ruby
+def examples
+  # map_results basically just calls permutations_of_strings(repeater.result),
+  # on each repeater
+  full_examples = RegexpExamples.map_results(
+    RegexpExamples::Parser.new(source, options).parse
+  )
+  RegexpExamples::BackReferenceReplacer.new.substitute_backreferences(full_examples)
+```
 
-<sub>\*Once again, I've been naughty and shown you a slightly simplified version, to avoid confusion. See the real thing over here.</sub>
+<sub>\*Once again, I've been naughty and shown you a slightly simplified version, to avoid confusion.
+See the real thing over [here](https://github.com/tom-lord/regexp-examples/blob/6b8afc366d728d196921723e135679ee35a2c843/lib/core_extensions/regexp/examples.rb#L7-L14).</sub>
 
-I leave you with one final example, showing the true power of this gem:
+## One Final Example
 
-**Question:** What the hell does [this ridiculous regex](http://emailregex.com/) match?! (Side note: It's usually a bad idea to validate email addresses like this! If you want to ensure the address is correct, just send a confirmation email!)
+I'll leave you with one final example, showing the true power of this gem.
+
+**Question:** What the hell does [this ridiculous regex](http://emailregex.com/) match?!
+(Side note: It's usually a bad idea to validate email addresses like this.
+If you want to ensure the address is correct, just send a confirmation email!)
 
 **Answer:** (On my average machine, it takes ~0.01 seconds to generate an example string!!)
+
+```ruby
+# Yes, this line of code is ridiculous :D
+pry(main)> email_regex = %r{(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])}
+pry(main)> email_regex.random_example
+  => "cec.y.1@gh.jd"
+```
