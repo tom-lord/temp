@@ -15,9 +15,11 @@ All shall be revealed...
 
 ## What Is A "Regular" Expression?
 
-> # Test big
-> *Test bold*
-> Test `code`
+> ### Regular Expression
+> *noun, computing*
+>
+> a sequence of symbols and characters expressing a string or pattern to
+> be searched for within a longer piece of text.
 
 Perhaps the most confusing aspect of regular expressions comes from their formal definition, and the fact that several features in the regex language are not really "regular" at all! These "irregular" pieces of syntax are, in short (and by no coincidence!), the "illegal syntax" in my regexp-examples gem.
 
@@ -41,8 +43,9 @@ Every other piece of syntax is really just a nice way to simplify writing out ho
     /[a-d]*/ == /(a|b|c|d)*/
     /\d\n?/  == /(0|1|2|3|4|5|6|7|8|9)(ε|\n)
     
-    # Note: My use of the == operator here is not to be taken too literally...
-    # In ruby, Regexp equality is not based purely on what strings they match!
+    # Note: My use of the == operator here is not to be taken
+    # too literally... In ruby, Regexp equality is not based
+    # purely on what strings they match!
     # http://ruby-doc.org/core/Regexp.html#method-i-3D-3D
 
 ...Hopefully, you get the idea. To put this another way, any regex that _can't_ be expressed in this way is _not_ truly a "regular" expression!
@@ -101,22 +104,23 @@ Like I said above: `/Group-Repeater-Group-Repeater-Group-Repeater-.../`
 
 ## How To Generate Examples From A Regular Expression
 
-  Picture
+![Drum roll, please...](/images/drumroll_please.jpg "Drumroll, please...")
 
 So, we have our parsed regex. All that remains is to transform this into its possible strings. The trick to this is that all groups and repeaters are given a special method: #result. These results are then built up, piece by piece, to form the full strings that match the regex. Let's take the above example, one step at a time:
 
-* The SingleCharGroup ("a") has one possible result: ["a"]
-* Therefore the StarRepeater has three possible results: ["", "a", "aa"]
-* Similarly, SingleCharGroup ("b") has one possible result: ["b"]
-* Therefore, PlusRepeater has three possible results: ["b", "bb", "bbb"]
-* Next, the OrGroup simply concatenates these arrays of possible results, i.e. it has six possible results: ["", "a", "aa", "b", "bb", "bbb"]
-* And finally, the top level OneTimeRepeater just returns these same values.
+* The `SingleCharGroup` (`"a"`) has one possible result: `["a"]`
+* Therefore the `StarRepeater` has three possible results: `["", "a", "aa"]`
+* Similarly, `SingleCharGroup` (`"b"`) has one possible result: `["b"]`
+* Therefore, `PlusRepeater` has three possible results: `["b", "bb", "bbb"]`
+* Next, the `OrGroup` simply concatenates these arrays of possible results,
+i.e. it has six possible results: `["", "a", "aa", "b", "bb", "bbb"]`
+* And finally, the top level `OneTimeRepeater` just returns these same values.
 
 And there you have it, for a fairly simple example! Let's look at one more, to demonstrate perhaps the most important method in the whole gem:
 
   Picture
 
-Once again, we make use of PlusRepeater#result and SingleCharGroup#result to build up the final answer from each "partial result".
+Once again, we make use of `PlusRepeater#result` and `SingleCharGroup#result` to build up the final answer from each "partial result".
 
 However, in this case we end up with the following:
 
@@ -136,11 +140,11 @@ This method gets used a lot, when dealing with more complicated regexes! It is t
 
 So, there you have it! Now you understand all about how to generate examples from regular expressions, right?...
 
-  Picture
+Picture
 
 Oh, but...
 
-* How do you deal with escaped characters, like \d, \W, etc?
+* How do you deal with escaped characters, like `\d`, `\W`, etc?
 * What about regexp options (ignorecase, multiline, extended form)?
 * What about unicode characters, control codes, named properties, and so on?
 * How on earth do you correctly parse all of the possible syntax in character sets, such as:
@@ -169,7 +173,7 @@ The important thing to recognise here is that you cannot know what the back-refe
 
     /(a|b)\1/.random_example
 
-You cannot possibly know whether the "\1" is meant to be an "a" or a "b", until after the capture group's "partial example" is chosen!
+You cannot possibly know whether the `\1` is meant to be an `"a"` or a `"b"`, until after the capture group's "partial example" is chosen!
 
 The solution? We cheat, and use a place-holder - then substitute the correct pattern back in later!
 
@@ -183,17 +187,17 @@ There is a lot of intricate logic involved in actually keeping track of the resu
 * The `MultiGroup` with `group_id=1` has two possible results: `["a", "b"]`
 * The `BackReferenceGroup` has one possible result: `["__1__"]`
 * This gives us a final array of possible results: `[["a", "b"], ["__1__"]]`
-* After applying the permutations_of_strings method, this gives us two "final results": `["a__1__", "b__1__"]`
+* After applying the `permutations_of_strings` method, this gives us two "final results": `["a__1__", "b__1__"]`
 * We now do one final step: Apply a `#substitute_backreferences` method on each string, to reveal the true strings that match the original regex: `["aa", "bb"]`
 
 And now finally, young Padawan, you are ready to see the actual implementation of `Regexp#examples`:
 
   Picture
 
-*Once again, I've been naughty and shown you a slightly simplified version, to avoid confusion. See the real thing over here.
+<sub>\*Once again, I've been naughty and shown you a slightly simplified version, to avoid confusion. See the real thing over here.</sub>
 
 I leave you with one final example, showing the true power of this gem:
 
-*Question:* What the hell does this ridiculous regex match?! (Note: Don't ever use a regex like that to validate an email address!!)
+**Question:** What the hell does [this ridiculous regex](http://emailregex.com/) match?! (Note: Don't ever use a regex like that to validate an email address!!)
 
-*Answer:* (On my average machine, it takes ~0.01 seconds to generate an example string!!)
+**Answer:** (On my average machine, it takes ~0.01 seconds to generate an example string!!)
