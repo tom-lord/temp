@@ -30,6 +30,8 @@ In this post, I will try to explain some of the core logic and techniques that I
 
 All shall be revealed...
 
+---
+
 ## What Is A "Regular" Expression?
 
 > ### Regular Expression
@@ -159,9 +161,22 @@ However, in this case we end up with the following:
 
 Where each of those inner arrays is the result of each `PlusRepeater`. We need to make one more step: Find all possible results, from joining one element from each array, to form a "final result" string. Enter the magic glue that holds this whole thing together:
 
-  Picture
+```ruby
+# Given an array of arrays of strings, returns all possible perutations
+# for strings, created by joining one element from each array
+#
+# For example:
+# permutations_of_strings [ ['a'], ['b'], ['c', 'd', 'e'] ] #=> ['abc', 'abd', 'abe']
+# permutations_of_strings [ ['a', 'b'], ['c', 'd'] ] #=> [ 'ac', 'ad', 'bc', 'bd' ]
+def self.permutations_of_strings(arrays_of_strings)
+  first = arrays_of_strings.shift
+  return first if arrays_of_strings.empty?
+  first.product( permutations_of_strings(arrays_of_strings) )
+end
+```
 
-<sub>\*I've actually simplified this method slightly, to avoid confusion. The real deal can be found here.</sub>
+<sub>\*I've actually simplified this method slightly, to avoid confusion. The real deal can be found
+[here](https://github.com/tom-lord/regexp-examples/blob/ce2f6ffb1d0e1b787f1baa667230807451d1b993/lib/regexp-examples/helpers.rb#L13-L19).</sub>
 
 And so, after applying this method to the above array, we end up with:
 
