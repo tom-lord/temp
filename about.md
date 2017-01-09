@@ -15,8 +15,11 @@ screenshots to this page when I get round to it...
 * [TLD Validation System](https://validations.valideus.com) (private; requires login)
 * [Domains Watch](https://domains.watch) (partially public; free to sign-up)
 * [GTLD Dashboard](http://gtld-dashboard.com) (private; requires login)
-* TLD "nic" (Network Information Center) pages - such as [nic.hsbc](http://nic.hsbc),
-[nic.gucci](http://nic.gucci) and [nic.kinder](http://nic.kinder) (fully public)
+* TLD "nic" (Network Information Center) pages (fully public) - such as:
+  * [nic.hsbc](http://nic.hsbc)
+  * [nic.gucci](http://nic.gucci)
+  * [nic.kinder](http://nic.kinder)
+  * ...About 20 more sites like this; you get the idea!
 * [Broadway Admin](https://admin.broadway) (private; requires login)
 
 ### Contact me
