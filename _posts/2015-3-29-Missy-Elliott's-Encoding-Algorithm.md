@@ -67,11 +67,17 @@ we started. For example:
 But how on Earth does Missy Elliott manage this, with her much more complicated encoding?! Here's one example, to show the reciprocal encoding in action:
 
 > **ORIGINAL: 10011101**
+>
 > shift:    00111011
+>
 > flip:     11000100
+>
 > reverse:  **00100011 (encoded)**
+>
 > shift:    01000110
+>
 > flip:     10111001
+>
 > reverse:  **10011101 (twice encoded == ORIGINAL!!)**
 
 Is this always true? Can we prove it? Yes - here's what I came up with:
