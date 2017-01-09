@@ -20,7 +20,7 @@ screenshots to this page when I get round to it...
   * [nic.gucci](http://nic.gucci)
   * [nic.kinder](http://nic.kinder)
   * ...About 20 more sites like this; you get the idea!
-* [Broadway Admin](https://admin.broadway) (private; requires login)
+* [Broadway Domains](https://domains.broadway) (private; requires login)
 
 ### Contact me
 
