@@ -104,7 +104,7 @@ Like I said above: `/Group-Repeater-Group-Repeater-Group-Repeater-.../`
 
 ## How To Generate Examples From A Regular Expression
 
-<p align="center">![Drum roll, please...](/images/drumroll_please.jpg "Drumroll, please...")</p>
+<p align="center"><img src="/images/drumroll_please.jpg"></p>
 
 So, we have our parsed regex. All that remains is to transform this into its possible strings. The trick to this is that all groups and repeaters are given a special method: #result. These results are then built up, piece by piece, to form the full strings that match the regex. Let's take the above example, one step at a time:
 
