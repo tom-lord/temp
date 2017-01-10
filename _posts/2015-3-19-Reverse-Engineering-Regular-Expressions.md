@@ -2,9 +2,11 @@
 layout: post
 title: Reverse Engineering Regular Expressions
 ---
-I recently published a powerful ruby gem on Github: [regexp-examples](https://github.com/tom-lord/regexp-examples).
-This library allows you to generate all (or one random) strings that match any regular expression!
-(With just [a few limitations](https://github.com/tom-lord/regexp-examples#impossible-features-illegal-syntax)
+I recently published a powerful ruby gem on Github:
+[regexp-examples](https://github.com/tom-lord/regexp-examples).
+This library allows you to generate all (or one random) strings that match any
+regular expression! (With just
+[a few limitations](https://github.com/tom-lord/regexp-examples#impossible-features-illegal-syntax)
 on what's possible.) To install it yourself and have a quick play is dead easy:
 
     > gem install regexp-examples
@@ -26,7 +28,10 @@ on what's possible.) To install it yourself and have a quick play is dead easy:
     [4] pry(main)> /\w{10}@(hotmail|gmail)\.com <--Backref! \1/.random_example
       => "cpRe_f2vMI@gmail.com <--Backref! gmail"
 
-In this post, I will try to explain some of the core logic and techniques that I used to build this library. What is a regular expression, really? How/why is it always possible de-construct a regex, to list all possible strings that match it? How on Earth did I get back-references to work?!
+In this post, I will try to explain some of the core logic and techniques that I
+used to build this library. What is a regular expression, really? How/why is it
+always possible de-construct a regex, to list all possible strings that match
+it? How on Earth did I get back-references to work?!
 
 All shall be revealed...
 
@@ -40,20 +45,27 @@ All shall be revealed...
 > a sequence of symbols and characters expressing a string or pattern to
 > be searched for within a longer piece of text.
 
-Perhaps the most confusing aspect of regular expressions comes from their formal definition, and the fact that several features in the regex language are not really "regular" at all! These "irregular" pieces of syntax are, in short (and by no coincidence!), the "illegal syntax" in my regexp-examples gem.
+Perhaps the most confusing aspect of regular expressions comes from their formal
+definition, and the fact that several features in the regex language are not
+really "regular" at all! These "irregular" pieces of syntax are, in short (and
+by no coincidence!), the "illegal syntax" in my regexp-examples gem.
 
-However, rather than mysteriously telling you what a regular expression isn't, let's try to explain what it is:
+However, rather than mysteriously telling you what a regular expression isn't,
+let's try to explain what it is:
 
-There are only _really_ **four** (yes, that's right, **four!**) pieces of syntax allowed in a "true" regular expression:
+There are only _really_ **four** (yes, that's right, **four!**) pieces of syntax
+allowed in a "true" regular expression:
 
 1. The "empty string", usually denoted by: `ε`
 2. Literal characters, e.g. `/abc123/`
 3. The `*` repeater, e.g. `/a*b*c*/`
 4. The `|` ("Or") operator, e.g. `/a|b|c/`
 
-Oh, and there's also brackets - so maybe five pieces of syntax, if you want to count those as well!
+Oh, and there's also brackets - so maybe five pieces of syntax, if you want to
+count those as well!
 
-Every other piece of syntax is really just a nice way to simplify writing out horrendously long, complicated combinations of the above. Let's try a few examples:
+Every other piece of syntax is really just a nice way to simplify writing out
+horrendously long, complicated combinations of the above. Let's try a few examples:
 
 ```ruby
 /a+/     == /a|a*/
@@ -69,9 +81,11 @@ Every other piece of syntax is really just a nice way to simplify writing out ho
 # http://ruby-doc.org/core/Regexp.html#method-i-3D-3D
 ```
 
-...Hopefully, you get the idea. To put this another way, any regex that _can't_ be expressed in this way is _not_ truly a "regular" expression!
+...Hopefully, you get the idea. To put this another way, any regex that _can't_
+be expressed in this way is _not_ truly a "regular" expression!
 
-An easy way to see whether or not this is the case is: Does (part of) the regex need to know its surrounding context, in order to determine a match? For example:
+An easy way to see whether or not this is the case is: Does (part of) the regex
+need to know its surrounding context, in order to determine a match? For example:
 
 ```ruby
 # How does "\b" know whether it lies on a word boundary?
@@ -80,13 +94,20 @@ An easy way to see whether or not this is the case is: Does (part of) the regex 
 # How does "^" know whether it lies at the start of a line?
 /line1\n^line2/
 
-# Or in general, how can any "look-ahead"/"look-behind" be regular?
+# Or in general, how can any "look-ahead"/"look-behind"
+# be regular?
 /irregular (?=expression)/
 ```
 
-These all need to know "what came before", or "what comes next", and are therefore not _True Regular Expressions™_. Hopefully this makes the common claim that "back-references are not regular" a little more obvious to understand: You need to know what the capture group matches before you can know what the back-reference matches (i.e. knowledge of context). So of course you cannot express such patterns using only those four symbols!
+These all need to know "what came before", or "what comes next", and are therefore
+not _True Regular Expressions™_. Hopefully this makes the common claim that
+"back-references are not regular" a little more obvious to understand: You need
+to know what the capture group matches before you can know what the back-reference
+matches (i.e. knowledge of context). So of course you cannot express such
+patterns using only those four symbols!
 
-One final point to make, before we move on: There is only really one type of repeater in regex; the others are all nothing more than shorthand:
+One final point to make, before we move on: There is only really one type of
+repeater in regex; the others are all nothing more than shorthand:
 
 ```ruby
 /a/  == /a{1}/
@@ -95,7 +116,9 @@ One final point to make, before we move on: There is only really one type of rep
 /a+/ == /a{1,}/
 ```
 
-Understanding this structure is at the very heart of my ruby gem; the whole library architecture depends on (and, for some occasional edge cases, is restricted by!) it.
+Understanding this structure is at the very heart of my ruby gem; the whole
+library architecture depends on (and, for some occasional edge cases, is
+restricted by!) it.
 
 All _True Regular Expressions™_ are built using this structure:
 
@@ -122,7 +145,9 @@ But this lays the foundations for the main purpose of this blog post:
 
 <p align="center"><img src="/images/bunny_hat.jpg"></p>
 
-Without getting bogged down in the nitty-gritty implementation details of parsing, let's dive straight in and look at the internal objects generated by `RegexpExamples::Parser`:
+Without getting bogged down in the nitty-gritty implementation details of parsing,
+let's dive straight in and look at the internal objects generated by
+`RegexpExamples::Parser`:
 
 ```ruby
 # After placing `binding.pry` at a crucial point, for inspection:
@@ -141,21 +166,29 @@ Without getting bogged down in the nitty-gritty implementation details of parsin
       @min_repeats=1>]]>]
 ```
 
-This may look complicated, but it's essentially not much different to what I described above.
-There is only one key additional thing to consider:
-In order to avoid problems with infinity, we must restrict repeaters like `*` and `+` to have an upper limit.
-Taken [straight from the gem's README](https://github.com/tom-lord/regexp-examples#configuration-options):
+This may look complicated, but it's essentially not much different to what I
+described above. There is only one key additional thing to consider.
 
-> `max_repeater_variance` (default = `2`) restricts how many examples to return for each repeater. For example:
+In order to avoid problems with infinity, we must restrict repeaters like `*`
+and `+` to have an upper limit. Taken
+[straight from the gem's README](https://github.com/tom-lord/regexp-examples#configuration-options):
+
+> `max_repeater_variance` (default = `2`) restricts how many examples to return
+> for each repeater. For example:
 >
 > `.*` is equivalent to `.{0,2}`
+>
 > `.+` is equivalent to `.{1,3}`
+>
 > `.{2,}` is equivalent to `.{2,4}`
+>
 > `.{,3}` is equivalent to `.{0,2}`
+>
 > `.{3,8}` is equivalent to `.{3,5}`
 
 
-Or, in other words, the above regex of `/a*|b+/` has been interpreted as equivalent to the following:
+Or, in other words, the above regex of `/a*|b+/` has been interpreted as
+equivalent to the following:
 
 ```ruby
 /(a{0,2}|b{1,3}){1}/
@@ -167,7 +200,11 @@ Like I said above: `/Group-Repeater-Group-Repeater-Group-Repeater-.../`
 
 <p align="center"><img src="/images/drumroll_please.jpg"></p>
 
-So, we have our parsed regex. All that remains is to transform this into its possible strings. The trick to this is that all groups and repeaters are given a special method: #result. These results are then built up, piece by piece, to form the full strings that match the regex. Let's take the above example, one step at a time:
+So, we have our parsed regex. All that remains is to transform this into its
+possible strings. The trick to this is that all groups and repeaters are given
+a special method: #result. These results are then built up, piece by piece, to
+form the full strings that match the regex. Let's take the above example,
+one step at a time:
 
 * The `SingleCharGroup` (`"a"`) has one possible result: `["a"]`
 * Therefore the `StarRepeater` has three possible results: `["", "a", "aa"]`
@@ -177,7 +214,8 @@ So, we have our parsed regex. All that remains is to transform this into its pos
 i.e. it has six possible results: `["", "a", "aa", "b", "bb", "bbb"]`
 * And finally, the top level `OneTimeRepeater` just returns these same values.
 
-And there you have it, for a fairly simple example! Let's look at one more, to demonstrate perhaps the most important method in the whole gem:
+And there you have it, for a fairly simple example! Let's look at one more, to
+demonstrate perhaps the most important method in the whole gem:
 
 ```ruby
 # Again, placing `binding.pry` at the same crucial point:
@@ -202,7 +240,8 @@ And there you have it, for a fairly simple example! Let's look at one more, to d
 
 
 
-Once again, we make use of `PlusRepeater#result` and `SingleCharGroup#result` to build up the final answer from each "partial result".
+Once again, we make use of `PlusRepeater#result` and `SingleCharGroup#result`
+to build up the final answer from each "partial result".
 
 However, in this case we end up with the following:
 
@@ -210,7 +249,10 @@ However, in this case we end up with the following:
 [["a", "aa", "aaa"], ["b", "bb", "bbb"], ["c", "cc", "ccc"]]
 ```
 
-Where each of those inner arrays is the result of each `PlusRepeater`. We need to make one more step: Find all possible results, from joining one element from each array, to form a "final result" string. Enter the magic glue that holds this whole thing together:
+Where each of those inner arrays is the result of each `PlusRepeater`. We need
+to make one more step: Find all possible results, from joining one element from
+each array, to form a "final result" string. Enter the magic glue that holds
+this whole thing together:
 
 ```ruby
 # Given an array of arrays of strings, returns all possible perutations
@@ -226,7 +268,8 @@ def self.permutations_of_strings(arrays_of_strings)
 end
 ```
 
-<sub>\*I've actually simplified this method slightly, to avoid confusion. The real deal can be found
+<sub>\*I've actually simplified this method slightly, to avoid confusion. The
+real deal can be found
 [here](https://github.com/tom-lord/regexp-examples/blob/ce2f6ffb1d0e1b787f1baa667230807451d1b993/lib/regexp-examples/helpers.rb#L13-L19).</sub>
 
 And so, after applying this method to the above array, we end up with:
@@ -235,9 +278,12 @@ And so, after applying this method to the above array, we end up with:
 ["abc", "abcc", "abccc", "abbc", "abbcc", .....]
 ```
 
-This method gets used a lot, when dealing with more complicated regexes! It is the magic function that allows patterns to be made arbitrarily complicated, with unlimited nesting of groups and so on.
+This method gets used a lot, when dealing with more complicated regexes! It is
+the magic function that allows patterns to be made arbitrarily complicated,
+with unlimited nesting of groups and so on.
 
-So, there you have it! Now you understand all about how to generate examples from regular expressions, right?...
+So, there you have it! Now you understand all about how to generate examples
+from regular expressions, right?...
 
 <p align="center"><img src="/images/iceberg.jpg"></p>
 
@@ -246,7 +292,8 @@ Oh, but...
 * How do you deal with escaped characters, like `\d`, `\W`, etc?
 * What about regexp options (ignorecase, multiline, extended form)?
 * What about unicode characters, control codes, named properties, and so on?
-* How on earth do you correctly parse all of the possible syntax in character sets, such as:
+* How on earth do you correctly parse all of the possible syntax in character
+sets, such as:
 
 ```ruby
 /[abc]/.examples
@@ -258,11 +305,15 @@ Oh, but...
 ...And I'm barely getting started here! There is a huge range of syntax to consider!
 
 
-To cut a long story short: parsing is complicated!! However, all the basic principles discussed above still apply.
+To cut a long story short: parsing is complicated!! However, all the basic
+principles discussed above still apply.
 
-There is just one final piece of the puzzle that I have mostly avoided up until this point: back-references.
+There is just one final piece of the puzzle that I have mostly avoided up until
+this point: back-references.
 
-As discussed earlier, back-references are not regular, as they require knowledge of context. They are not strictly possible to fully support with this gem! (And indeed, there are some rare edge cases where my solution does not work.)
+As discussed earlier, back-references are not regular, as they require knowledge
+of context. They are not strictly possible to fully support with this gem!
+(And indeed, there are some rare edge cases where my solution does not work.)
 
 But, as promised, all shall be revealed...
 
@@ -270,19 +321,27 @@ But, as promised, all shall be revealed...
 
 ## How to generate examples with back-references
 
-The important thing to recognise here is that you cannot know what the back-references need to match, until after the rest of the regex example has been generated. For example, consider the following:
+The important thing to recognise here is that you cannot know what the
+back-references need to match, until after the rest of the regex example has been
+generated. For example, consider the following:
 
 ```ruby
 /(a|b)\1/.random_example
 ```
 
-You cannot possibly know whether the `\1` is meant to be an `"a"` or a `"b"`, until after the capture group's "partial example" is chosen!
+You cannot possibly know whether the `\1` is meant to be an `"a"` or a `"b"`,
+until after the capture group's "partial example" is chosen!
 
-The solution? We cheat, and use a place-holder - then substitute the correct pattern back in later!
+The solution? We cheat, and use a place-holder - then substitute the correct
+pattern back in later!
 
-The pattern I chose is: `__X__`, where `X` is the name of your back-reference (in this case, `"1"`).
+The pattern I chose is: `__X__`, where `X` is the name of your back-reference
+(in this case, `"1"`).
 
-There is a lot of intricate logic involved in actually keeping track of the results of these capture groups (perhaps the topic for a follow-up blog post?), so let's gloss over this detail for now. So in summary, examples for the above regex are calculated as follows:
+There is a lot of intricate logic involved in actually keeping track of the
+results of these capture groups (perhaps the topic for a follow-up blog post?),
+so let's gloss over this detail for now. So in summary, examples for the above
+regex are calculated as follows:
 
 * The `SingleCharGroup` (`"a"`) has one possible result: `["a"]`
 * The `SingleCharGroup` (`"b"`) has one possible result: `["b"]`
@@ -290,10 +349,13 @@ There is a lot of intricate logic involved in actually keeping track of the resu
 * The `MultiGroup` with `group_id=1` has two possible results: `["a", "b"]`
 * The `BackReferenceGroup` has one possible result: `["__1__"]`
 * This gives us a final array of possible results: `[["a", "b"], ["__1__"]]`
-* After applying the `permutations_of_strings` method, this gives us two "final results": `["a__1__", "b__1__"]`
-* We now do one final step: Apply a `#substitute_backreferences` method on each string, to reveal the true strings that match the original regex: `["aa", "bb"]`
+* After applying the `permutations_of_strings` method, this gives us two "final
+results": `["a__1__", "b__1__"]`
+* We now do one final step: Apply a `#substitute_backreferences` method on each
+string, to reveal the true strings that match the original regex: `["aa", "bb"]`
 
-And now finally, young Padawan, you are ready to see the actual implementation of `Regexp#examples`:
+And now finally, young Padawan, you are ready to see the actual implementation
+of `Regexp#examples`:
 
 ```ruby
 def examples
@@ -305,18 +367,21 @@ def examples
   RegexpExamples::BackReferenceReplacer.new.substitute_backreferences(full_examples)
 ```
 
-<sub>\*Once again, I've been naughty and shown you a slightly simplified version, to avoid confusion.
-See the real thing over [here](https://github.com/tom-lord/regexp-examples/blob/6b8afc366d728d196921723e135679ee35a2c843/lib/core_extensions/regexp/examples.rb#L7-L14).</sub>
+<sub>\*Once again, I've been naughty and shown you a slightly simplified version,
+to avoid confusion. See the real thing over
+[here](https://github.com/tom-lord/regexp-examples/blob/6b8afc366d728d196921723e135679ee35a2c843/lib/core_extensions/regexp/examples.rb#L7-L14).</sub>
 
 ## One Final Example
 
 I'll leave you with one final example, showing the true power of this gem.
 
-**Question:** What the hell does [this ridiculous regex](http://emailregex.com/) match?!
-(Side note: It's usually a bad idea to validate email addresses like this.
-If you want to ensure the address is correct, just send a confirmation email!)
+**Question:** What the hell does [this ridiculous regex](http://emailregex.com/)
+match?! (Side note: It's usually a bad idea to validate email addresses like
+this. If you want to ensure the address is correct, just send a confirmation
+email!)
 
-**Answer:** (On my average machine, it takes ~0.01 seconds to generate an example string!!)
+**Answer:** (And on my average machine, it took `~0.01` seconds to generate this example
+string!!)
 
 ```ruby
 # Yes, this line of code is ridiculous :D
