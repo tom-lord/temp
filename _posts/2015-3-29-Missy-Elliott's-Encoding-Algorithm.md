@@ -1,7 +1,8 @@
 ---
 layout: post
-title: Missy Elliott's Reciprocal Cipher, And Perfect Oscillating Sequences 
+title: Missy Elliott's Reciprocal Cipher
 ---
+
 <p align="center"><img src="/images/missy_elliott/portrait.jpg"></p>
 
 ```ruby
