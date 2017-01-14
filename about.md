@@ -13,16 +13,20 @@ Most of the "interesting" projects unfortunately require a login, but I have pro
 
 * [TLD Validation System](https://validations.valideus.com) (private; requires login)
 <p align="center"><img src="/images/comlaude/validations.png"></p>
+
 * [Domains Watch](https://domains.watch) (partially public; free to sign-up)
 <p align="center"><img src="/images/comlaude/domains_watch.png"></p>
+
 * [GTLD Dashboard](http://gtld-dashboard.com) (private; requires login)
+<p align="center"><img src="/images/comlaude/gtld_dashboard.png"></p>
+
 * TLD "nic" (Network Information Center) pages (fully public) - such as:
   * [nic.hsbc](http://nic.hsbc)
   * [nic.gucci](http://nic.gucci)
   * [nic.kinder](http://nic.kinder)
   * ...About 20 more sites like this; you get the idea!
-<p align="center"><img src="/images/comlaude/gtld_dashboard.png"></p>
 <p align="center"><img src="/images/comlaude/gtld_dashboard_public.png"></p>
+
 * [Broadway Domains](https://domains.broadway) (private; requires login)
 <p align="center"><img src="/images/comlaude/dns_portal.png"></p>
 
