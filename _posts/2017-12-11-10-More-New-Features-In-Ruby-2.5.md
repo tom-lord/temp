@@ -68,6 +68,7 @@ So, that first line of code would also return `true` when `string = "123\ntest"`
 Using the new `String#start_with?` method, such a mistake wouldn't happen:
 
 ```ruby
+# Ruby v2.5
 string.start_with?(/[a-z]/) # Also good
 ```
 
@@ -89,7 +90,7 @@ and make it a little less likely to feel the need for `pry` in every application
 * Show source around `binding.irb` is now shown on startup.
 
 ```ruby
-# Ruby 2.4
+# Ruby v2.4
 
 # test.rb:
 require 'irb'
@@ -101,7 +102,7 @@ test
 # Running the file yields:
 irb(main):001:0>
 
-# Ruby 2.5:
+# Ruby v2.5:
 # test.rb:
 def test
   binding.irb
@@ -188,7 +189,7 @@ However, more bizarrely, it also
 1/3 # => 0
 (1/3).class #=> Integer
 
-# In ruby 2.5, this line will `raise LoadError: cannot load such file -- mathn`
+# In Ruby v2.5, this line will `raise LoadError: cannot load such file -- mathn`
 # (Unless you also install the deprecated `mathn` gem.)
 require 'mathn'
 1/3 # => (1/3)
@@ -246,6 +247,7 @@ into the core language.
 is one such method; continuing the trend.
 
 ```ruby
+# Ruby v2.5
 {a: 1, b: 2, c: 3}.slice(:a, :b)
 #=> {:a=>1, :b=>2}
 ```
@@ -317,6 +319,7 @@ and it was left up to web frameworks such as Rails to [define their own](http://
 Additionally, definitions of the following status codes have been added to ruby:
 
 ```
+# Ruby v2.5
 require 'net/http/status_codes'
 Net::HTTP::STATUS_CODES
 {
