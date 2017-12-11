@@ -20,6 +20,25 @@ let's dive in and unravel _10 more_ handpicked highlights!
 `Module#attr`, `attr_accessor`, `attr_reader`, `attr_writer`, `define_method`,
 `alias_method`, `undef_method` and `remove_method` are now *all* public.
 
+For example:
+
+```ruby
+# Ruby 2.4
+Integer.alias_method :plus, :+
+#=> NoMethodError: private method `alias_method' called for Integer:Class
+
+# Workaround 1:
+Integer.send(:alias_method, :plus, :+)
+
+# Workaround 2:
+class Integer
+  alias_method :plus, :+
+end
+
+# Ruby 2.5
+Integer.alias_method :plus, :+
+```
+
 This update follows nicely from similar changes back in Ruby v2.1.0, where `Module#include`
 and `Module#prepend` were [made public](https://github.com/ruby/ruby/blob/v2_1_0/NEWS#core-classes-updates-outstanding-ones-only).
 
@@ -68,6 +87,37 @@ and make it a little less likely to feel the need for `pry` in every application
 
 * `require 'irb'` is no longer needed in your code, in order to invoke `binding.irb`.
 * Show source around `binding.irb` is now shown on startup.
+
+```ruby
+# Ruby 2.4
+
+# test.rb:
+require 'irb'
+def test
+  binding.irb
+end
+test
+
+# Running the file yields:
+irb(main):001:0>
+
+# Ruby 2.5:
+# test.rb:
+def test
+  binding.irb
+end
+test
+
+# Running the file yields:
+From: test.rb @ line 2 :
+
+    1: def test
+ => 2:   binding.irb
+    3: end
+    4: test
+
+irb(main):001:0>
+```
 
 ## 4. `Integer.sqrt` added
 
@@ -129,16 +179,28 @@ but also _changes_, the behaviour of `Integer`s!
 
 When you `require 'mathn'`, this in turn load other libraries such as `require 'prime'`,
 which adds the methods: `Integer.each_prime`, `Integer.from_prime_division`,
-`Integer#prime?` and `Integer#prime?`. However, more bizarrely, it also
+`Integer#prime?` and `Integer#prime?`.
+However, more bizarrely, it also
 [*redefines*](https://github.com/ruby/mathn/blob/93cee0b3309239748017b51688596962f43467f7/lib/mathn.rb#L67-L76)
 `Integer#/` to be an alias for `Numeric#quo`!
 
-This isn't _usually_ a problem, but it certainly doesn't conform the the [principle
+```ruby
+1/3 # => 0
+(1/3).class #=> Integer
+
+# In ruby 2.5, this line will `raise LoadError: cannot load such file -- mathn`
+# (Unless you also install the deprecated `mathn` gem.)
+require 'mathn'
+1/3 # => (1/3)
+(1/3).class #=> Rational
+```
+
+This isn't _always_ a problem, but it certainly doesn't conform the the [principle
 of least surprise](https://en.wikipedia.org/wiki/Principle_of_least_astonishment).
 
 For example, there was [a case about 9 years ago](https://stackoverflow.com/a/3445121/1954610)
 where the Rubinius VM essentially "blew up" due to some obscure code simply running
-`require 'mathn'`. PEven today, people are sometimes left confused by [different behaviour
+`require 'mathn'`. Even today, people are sometimes left confused by [different behaviour
 on development vs production servers](https://stackoverflow.com/q/47457498/1954610),
 due to some production-specific dependency loading the library!
 
@@ -165,6 +227,9 @@ was then raised with the core developers, and promptly fixed. And, once again,
 the code fix was [simple](https://bugs.ruby-lang.org/projects/ruby-trunk/repository/revisions/60739/diff).
 
 This (obscure) bug was in fact a lingering legacy of Ruby 1.9's implementation!
+However, its fix could prove to be quite useful in conjunction with
+[other changes](https://bugs.ruby-lang.org/projects/ruby-trunk/repository/revisions/58891/diff)
+in Ruby 2.5.
 
 ## 8. `Hash#slice` added
 
@@ -179,6 +244,11 @@ features](http://mitrev.net/ruby/2015/11/13/the-operator-in-ruby/) and merging t
 into the core language.
 [`Hash#slice`](https://apidock.com/rails/ActiveSupport/CoreExtensions/Hash/Slice)
 is one such method; continuing the trend.
+
+```ruby
+{a: 1, b: 2, c: 3}.slice(:a, :b)
+#=> {:a=>1, :b=>2}
+```
 
 ## 9. `SecureRandom.alphanumeric` added
 
