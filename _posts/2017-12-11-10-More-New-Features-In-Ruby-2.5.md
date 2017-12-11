@@ -23,7 +23,7 @@ let's dive in and unravel _10 more_ handpicked highlights!
 For example:
 
 ```ruby
-# Ruby 2.4
+# Ruby v2.4
 Integer.alias_method :plus, :+
 #=> NoMethodError: private method `alias_method' called for Integer:Class
 
@@ -35,7 +35,7 @@ class Integer
   alias_method :plus, :+
 end
 
-# Ruby 2.5
+# Ruby v2.5
 Integer.alias_method :plus, :+
 ```
 
@@ -224,8 +224,8 @@ you will have traceability of the root culprit in the `Gemfile.lock`!
 
 (Bug [#14095](https://bugs.ruby-lang.org/issues/14095)).
 
-Similar to #5 above, this just goes to show how open well the community works to improve
-the language. What started out as a [discussion on Reddit](https://www.reddit.com/r/ruby/comments/7bszd5/setting_script_encoding_for_erb_file/)
+Similar to #5 above, this just goes to show how well the open source community
+works to improve the language. What started out as a [discussion on Reddit](https://www.reddit.com/r/ruby/comments/7bszd5/setting_script_encoding_for_erb_file/)
 was then raised with the core developers, and promptly fixed. And, once again,
 the code fix was [simple](https://bugs.ruby-lang.org/projects/ruby-trunk/repository/revisions/60739/diff).
 
@@ -351,8 +351,9 @@ and a [56 new emojis](http://www.unicode.org/emoji/charts/emoji-released.html)!
 ## Conclusion
 
 The ruby language has increasingly stabilised over the past few years. And while it's
-fair to say that these changes are far less revolutionary than what we saw back in
-Ruby 2.0 for instance, there is still a lot going on within this active community.
+fair to say that these changes are far less revolutionary than
+[what we saw back in Ruby v2.0](https://www.ruby-lang.org/en/news/2013/02/24/ruby-2-0-0-p0-is-released/)
+for instance, there is still a lot going on within this active community.
 
 Ruby v2.5 will be released on Christmas Day, but you can
 [download a pre-release version today](https://www.ruby-lang.org/en/downloads/releases/)
