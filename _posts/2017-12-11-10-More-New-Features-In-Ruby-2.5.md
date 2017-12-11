@@ -83,7 +83,7 @@ or even some [hybrid](https://github.com/deivid-rodriguez/pry-byebug) of the abo
 ...Which is a little odd, since ruby already comes with a pretty good built-in REPL: `irb`
 ("Interactive Ruby").
 
-But as of ruby `2.5`, we see two enhancements to the library that help bridge the gap,
+But as of ruby v2.5, we see two enhancements to the library that help bridge the gap,
 and make it a little less likely to feel the need for `pry` in every application:
 
 * `require 'irb'` is no longer needed in your code, in order to invoke `binding.irb`.
@@ -176,12 +176,12 @@ such a robust, stable language.
 It may sound odd to announce the "removal" of a library as a new feature, but
 please hear me out!...
 
-[`mathn`](https://github.com/ruby/mathn) is an odd library. It not only adds to,
+[`mathn`](https://github.com/ruby/mathn) is an unusual library. It not only adds to,
 but also _changes_, the behaviour of `Integer`s!
 
-When you `require 'mathn'`, this in turn load other libraries such as `require 'prime'`,
+When you `require 'mathn'`, this in turn loads other libraries such as `require 'prime'`,
 which adds the methods: `Integer.each_prime`, `Integer.from_prime_division`,
-`Integer#prime?` and `Integer#prime?`.
+`Integer#prime?` and `Integer#prime_division`.
 
 However, more bizarrely, it also
 [*redefines*](https://github.com/ruby/mathn/blob/93cee0b3309239748017b51688596962f43467f7/lib/mathn.rb#L67-L76)
@@ -229,10 +229,10 @@ works to improve the language. What started out as a [discussion on Reddit](http
 was then raised with the core developers, and promptly fixed. And, once again,
 the code fix was [simple](https://bugs.ruby-lang.org/projects/ruby-trunk/repository/revisions/60739/diff).
 
-This (obscure) bug was in fact a lingering legacy of Ruby 1.9's implementation!
+This (obscure) bug was in fact a lingering legacy of Ruby v1.9's implementation!
 However, its fix could prove to be quite useful in conjunction with
 [other changes](https://bugs.ruby-lang.org/projects/ruby-trunk/repository/revisions/58891/diff)
-in Ruby 2.5.
+in Ruby v2.5.
 
 ## 8. `Hash#slice` added
 
@@ -312,7 +312,7 @@ library?
 
 (Feature [#12935](https://bugs.ruby-lang.org/issues/12935)).
 
-Ruby 2.5 has now [defined a hash of all HTTP status codes](https://github.com/ruby/ruby/blob/bd73d374715ae8ca6e53ebd4a32f3ae2d6542352/lib/net/http/status.rb#L21-L81)!
+Ruby v2.5 has now [defined a hash of all HTTP status codes](https://github.com/ruby/ruby/blob/bd73d374715ae8ca6e53ebd4a32f3ae2d6542352/lib/net/http/status.rb#L21-L81)!
 
 Previously, this was only recorded in [documentation](https://github.com/ruby/ruby/blob/86a794a6c34c9412f497907736b4857739b7af3c/lib/net/http.rb#L331-L387),
 and it was left up to web frameworks such as Rails to [define their own](http://www.railsstatuscodes.com/)
@@ -341,7 +341,7 @@ Net::HTTP::STATUS_CODES
 (Feature [#13685](https://bugs.ruby-lang.org/issues/13685)).
 
 Keeping up with the new unicode standard, [released in June 2017](http://blog.unicode.org/2017/06/announcing-unicode-standard-version-100.html),
-Ruby 2.5 has been updated to support the new characters.
+Ruby v2.5 has been updated to support the new characters.
 
 The new characters include a [Bitcoin symbol](https://www.unicode.org/charts/PDF/Unicode-10.0/U100-20A0.pdf)
 and a [56 new emojis](http://www.unicode.org/emoji/charts/emoji-released.html)!
