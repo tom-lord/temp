@@ -163,7 +163,8 @@ Fairly self-explanatory:
 
 Changes like this usually slip under the radar, as they are not "exciting" features.
 But it just goes to show: There's still all sorts of simple room for improvement in
-the language; and sometimes the change you wish to [make may not even be very complicated] (https://bugs.ruby-lang.org/attachments/6464/patch.diff)!
+the language; and sometimes the change you wish to
+[make may not even be very complicated](https://bugs.ruby-lang.org/attachments/6464/patch.diff)!
 
 But all of these many incremental changes add up, and are what makes modern ruby
 such a robust, stable language.
@@ -181,6 +182,7 @@ but also _changes_, the behaviour of `Integer`s!
 When you `require 'mathn'`, this in turn load other libraries such as `require 'prime'`,
 which adds the methods: `Integer.each_prime`, `Integer.from_prime_division`,
 `Integer#prime?` and `Integer#prime?`.
+
 However, more bizarrely, it also
 [*redefines*](https://github.com/ruby/mathn/blob/93cee0b3309239748017b51688596962f43467f7/lib/mathn.rb#L67-L76)
 `Integer#/` to be an alias for `Numeric#quo`!
@@ -341,7 +343,7 @@ Net::HTTP::STATUS_CODES
 Keeping up with the new unicode standard, [released in June 2017](http://blog.unicode.org/2017/06/announcing-unicode-standard-version-100.html),
 Ruby 2.5 has been updated to support the new characters.
 
-There new characters include a [Bitcoin symbol](https://www.unicode.org/charts/PDF/Unicode-10.0/U100-20A0.pdf)
+The new characters include a [Bitcoin symbol](https://www.unicode.org/charts/PDF/Unicode-10.0/U100-20A0.pdf)
 and a [56 new emojis](http://www.unicode.org/emoji/charts/emoji-released.html)!
 
 <p align="center"><img src="https://imgs.xkcd.com/comics/vomiting_emoji_2x.png"></p>
