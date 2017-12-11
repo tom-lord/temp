@@ -23,7 +23,7 @@ footer-links:
   flickr:
   github: tom-lord
   instagram:
-  linkedin:
+  linkedin: tom-lord-51396662
   pinterest:
   rss: # just type anything here for a working RSS icon
   twitter:
@@ -86,4 +86,3 @@ exclude:
   - CNAME
 
 theme: jekyll-theme-modernist
-
