@@ -344,7 +344,7 @@ Keeping up with the new unicode standard, [released in June 2017](http://blog.un
 Ruby v2.5 has been updated to support the new characters.
 
 The new characters include a [Bitcoin symbol](https://www.unicode.org/charts/PDF/Unicode-10.0/U100-20A0.pdf)
-and a [56 new emojis](http://www.unicode.org/emoji/charts/emoji-released.html)!
+and [56 new emojis](http://www.unicode.org/emoji/charts/emoji-released.html)!
 
 <p align="center"><img src="https://imgs.xkcd.com/comics/vomiting_emoji_2x.png"></p>
 
