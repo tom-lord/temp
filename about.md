@@ -20,6 +20,8 @@ Below are just a few screenshots of the platforms we are developing:
 <p align="center"><img src="/images/smhw/community_resources.png"></p>
 <p align="center"><img src="/images/smhw/public_calendar.png"></p>
 
+(Note: We're currently [hiring](https://www.teamsatchel.com/about/careers.html)!)
+
 #### Com Laude / Valideus
 
 I was employed by [Com Laude](https://comlaude.com/) from October 2014 - March 2017.
