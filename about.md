@@ -8,7 +8,25 @@ Full-stack software developer, specialising in Ruby On Rails and associated tech
 
 ### Recent Work
 
-I have primarily been focused on designing/creating/maintaining a variety of websites over the past few years.
+#### Team Satchel / Show My Homework
+
+I have been employed at Team Satchel from March 2017 - Present.
+
+The company provides a variety of software solutions for schools; their main website
+and mobile apps (ShowMyHomework) has over 1 million active users.
+
+Below are just a few screenshots of the platforms we are developing:
+
+<p align="center"><img src="/images/smhw/community_resources.png"></p>
+<p align="center"><img src="/images/smhw/public_calendar.png"></p>
+
+#### Com Laude / Valideus
+
+I was employed by [Com Laude](https://comlaude.com/) from October 2014 - March 2017.
+
+In this time, I designed/created/maintained a variety of tools and websites,
+ranging from small Proof of Concepts/Minimal Viable Products to relatively large
+applications (approx 50,000 total users).
 Most of the "interesting" projects unfortunately require a login, but I have provided some screenshots below:
 
 * [TLD Validation System](https://validations.valideus.com) (private; requires login)
